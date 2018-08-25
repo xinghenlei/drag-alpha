@@ -1,0 +1,62 @@
+@charset "UTF-8";
+/* common */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 微软雅黑, "微软雅黑", "Microsoft YaHei";
+  font-size: 14px;
+  text-align: center; }
+
+span {
+  display: inline-block; }
+
+a {
+  text-decoration: none; }
+
+p,
+ul {
+  margin: 0; }
+
+li {
+  list-style-image: none;
+  list-style-type: none; }
+
+i,
+cite,
+em,
+var,
+address,
+dfn {
+  font-style: normal; }
+
+.clearfix {
+  overflow: hidden;
+  zoom: 1; }
+  .clearfix:after {
+    clear: both;
+    content: '.';
+    display: block;
+    width: 0;
+    height: 0;
+    visibility: hidden; }
+
+.fleft {
+  float: left; }
+
+.fixed {
+  position: fixed; }
+
+a {
+  text-decoration: none; }
+
+/* nav.vue */
+.nav {
+  width: 100%; }
+
+.cssHeader {
+  width: 20%; }
+
+/*# sourceMappingURL=index.css.map */
