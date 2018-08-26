@@ -1,5 +1,5 @@
 <template>
-    <div :class="['nav',{clearfix:isCross==='false','fleft':isCross,fixed:'isFixed'}]" ref="topDiv">
+    <div :class="['nav',{clearfix:isCross==='false','fleft':isCross,fixed:'isFixed'}]">
         <div :class="cssHeader" v-if="navHeader_html">
                 <slot><slot>
                 {{navHeader_html}}            
@@ -13,8 +13,8 @@
 </template>
 <script>
 export default {
-  name: "nav",
-  prop: {
+  name: "nav-alpha",
+  props: {
     isFixed: {
       type: Boolean,
       default: false
@@ -37,14 +37,16 @@ export default {
     }, //头部置顶
     navProps: {
       type: Object,
-      default: {
-        cssLi: null, //classname
-        cssA: null, //classname
-        link: "", //link
-        word: "test",
-        click: function(e) {
-          return true;
-        } //click event
+      default: function() {
+        return {
+          cssLi: null, //classname
+          cssA: null, //classname
+          link: "", //link
+          word: "test",
+          click: function(e) {
+            return true;
+          } //click event
+        };
       }
     } //菜单栏数据项
   }
