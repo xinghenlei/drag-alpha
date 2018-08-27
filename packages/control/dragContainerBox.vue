@@ -1,25 +1,29 @@
 <template>
     <div draggbale="true" :class="cssBox" @dragover="dragover" @drop="drop">
         <div v-for="(item,index) in boxs" :key="index">
-            <component v-bind:is="item.dragType" initDatas="item.initDatas"></component>
+            <component v-bind:is="item.boxName" initDatas="item.initDatas" boxIndex="item.boxIndex"></component>
         </div>
     </div>
 </template>
 <script>
 export default {
-    name:'drag-Container',
+    name:'drag-ContainerBox',
     props:{
         cssBox:{
             type:String,
-            defautl:"dragContainer",
+            default:"dragContainer",
         },//classname
         boxType:{
             type:String,
-            default:"normal",
+            default:"container",
         },//box of type, Container、Normal 、Form、Control
         domType:String,//tag name
         boxIndex:Number,//id
-        initDatas:Object,
+        initDatas:Object,/*
+        default property:
+            controlName  string   
+            ……
+        */
         boxs:{
             type:Array,
             default:function(){
@@ -36,13 +40,20 @@ export default {
         dragover = function(e) {
             e.preventDefault();
         },
-        drop:function(e){
+        drop:function(e){        
             e.preventDefault();
+            var allowBox=["drag-Normalbox","drag-FormBox"]
             var boxName=e.dataTransfer.getData("boxName");
+            if(allowBox.indexOf(boxName)==-1){
+                window.alert("控件类型不对，请注意拖拽操作范围");
+                return false;
+            }
             var initDatas=e.dataTransfer.getData("initDatas");
-            var length=this.boxs.length;
+            var length=this.boxs.length;//The amount of controls loaded by the current container
             this.boxs.push({boxName:boxName,initDatas:initDatas,boxIndex:max+1});
-        }
+            e.stopPropagation();
+            //  vuex update after some month in the future
+        }//拖动功能实现
     }
 }
 </script>
