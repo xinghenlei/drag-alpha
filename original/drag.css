@@ -1,0 +1,132 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.div1 {
+    overflow: hidden;
+}
+
+.col {
+    min-height: 100%;
+    width: 33%;
+    float: left;
+}
+
+.componenets .config {
+    width: 30%;
+}
+
+[class^=div],
+.dragboxtest {
+    margin: 0 auto;
+    text-align: center;
+}
+.dragboxbase img {
+    width: 80%;
+}
+
+/* 控件库样式 */
+.dragbase{
+    margin: 20px auto;
+    width: 50%;
+    text-align: center;
+}
+.dragintro{
+    vertical-align: middle;
+    padding-right: 20%;
+}
+.dragimg{
+    
+}
+.dragcontainer{
+    width:50px;
+    vertical-align: middle;
+}
+
+.dragnormalbox{
+    margin: 20px auto;
+    border:1px solid red;
+}
+.dragformbox{
+    margin: 20px auto;
+    border:1px solid black;
+}
+/* 控件库样式 */
+/* 操作台 基类控件样式 */
+.dragcheck{
+    border: 1px dashed red;
+}
+.dragimgbase{
+    margin: 10% auto;
+    display: block;
+}
+.dragboxbase{
+    width:65%;
+    text-align: center;
+}
+.dragformbase{
+    min-height: 400px;
+    background:white;
+    width:50%;                 
+    display: flex;
+    flex-flow: wrap;
+    align-content: flex-start;
+    position: relative;
+}
+.dragboxbase[data-dragtype=form]{
+    height: 5rem;
+}
+.dragboxcontainer{
+    border: 1px solid ;
+}
+
+.draglabelbase{
+    margin-left: 20px;
+    margin-right: 10px;
+}
+.dragtextbase{
+    width: 80%;
+    height: 16px;
+}
+.dragselectbase{
+    width: 80%;
+    height: 20px;
+}
+.dragbuttonbase{
+    height: 50px;
+    width:80%;
+}
+.dragformbase [data-dragtype=form_control]{
+    margin:20px auto;
+    z-index: 2;
+
+}
+.dragformbg{
+    width: 80%;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    margin: 0 10%;
+}
+
+
+/* 操作台 基类控件样式 */
+
+/* 配置项*/
+.config_container{
+    width: 60%;
+    margin:20px auto;
+}
+.config_items{
+    width: 60%;
+    margin: 10px auto;
+}
+.config_intro{
+
+}
+/* 配置项*/

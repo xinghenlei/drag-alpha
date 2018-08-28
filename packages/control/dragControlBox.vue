@@ -1,5 +1,5 @@
 <template>
-    <div draggbale="false" :class="cssBox" @dragover="dragover" @drop="drop">
+    <div draggable="isDrag" :class="cssBox" @dragover="dragover" @drop="drop">
         <component v-bind:is="domType" initDatas="initDatas" boxIndex="boxIndex"></component>
     </div>
 </template>
@@ -10,9 +10,9 @@
 export default {
     name:'drag-ComtrolBox',
     props:{
-        draggable:{
+        isDrag:{
             type:Boolean,
-            default:false,
+            defaule:false,
         },
         IsNested:{
             type:Boolean,
@@ -24,14 +24,18 @@ export default {
         },//classname
         boxType:{
             type:String,
-            default:"Comtrol",
+            default:"formComtrol",
         },//box of type, Container、Normal 、Form、Control
-        domType:String,//tag name
+        controlName:String,//tag name
         boxIndex:Number,//id
+        controlLevel:{
+            type:Number,
+            default:3
+        },//0 ——container、1————normal、2————form、3————formControl
         initDatas:Object,              
     },
     methods:{
-        dragover = function(e) {
+        dragover:function(e) {
             e.preventDefault();
         },
         drop:function(e){

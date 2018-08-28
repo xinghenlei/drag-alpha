@@ -1,6 +1,6 @@
 <template>
-    <div draggbale="false" :class="cssBox" @dragover="dragover" @drop="drop">
-        <component v-bind:is="domType" initDatas="initDatas" boxIndex="boxIndex"></component>
+    <div draggbale="isDrag" :class="cssBox" @dragover="dragover" @drop="drop" ref="box">
+        <component v-bind:is="domType" initDatas="initDatas" index="boxIndex"></component>
     </div>
 </template>
 /* 
@@ -10,9 +10,9 @@
 export default {
     name:'drag-NormalBox',
     props:{
-        draggable:{
+        isDrag:{
             type:Boolean,
-            default:false,
+            defaule:false,
         },
         IsNested:{
             type:Boolean,
@@ -26,20 +26,42 @@ export default {
             type:String,
             default:"normal",
         },//box of type, Container、Normal 、Form、Control
-        domType:String,//tag name
-        boxIndex:Number,//id
+        controlName:{
+            type:String,//tag name 
+            required:true,
+        },
+        boxIndex:Number,
+        controlLevel:{
+            type:Number,
+            default:1
+        },//0 ——container、1————normal、2————form、3————formControl
         initDatas:Object,              
     },
+    computed:{
+        randomId: function() {
+            var timestamp = new Date().getTime().toString() + this.classname;
+            return timestamp;
+        }//id
+    },
     methods:{
-        dragover = function(e) {
+        dragover:function(e) {
             e.preventDefault();
         },
         drop:function(e){
             e.preventDefault();
-            var domType=e.dataTransfer.getData("domType");
-            var initDatas=e.dataTransfer.getData("initDatas");
-            this.domType=domType;
-            this.initDatas=initDatas;
+            var controlLevel=e.dataTransfer.getData("controlLevel");
+            var dragIndex=e.dataTransfer.getData("dragIndex");
+            var randomId=e.dataTransfer.getData("randomId");
+            if(controlLevel!=2||controlLevel!=1){
+                window.alert("拖动控件不符合")//prompt update after a while 
+                return false;
+            }
+            $emit("dragover-slwp",randomId,this.boxIndex);
+            this.boxIndex=dragIndex;
+            /*  
+            I'm still thinking about the two ways of CSS(flex-basis) and data(initData slwp) for the control position exchange problem.
+            if you want to talk about it,I'd be happy to discuss it with you on issues            
+            */
             e.stopPropagation();
         }//拖动功能实现
     }

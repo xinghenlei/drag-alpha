@@ -1,5 +1,5 @@
 <template>
-    <form method="type" enctype="enctype" action="action" draggbale="true" :class="cssBox" @dragover="dragover" @drop="drop" @submit="submit">
+    <form draggbale="isDrag" method="type" enctype="enctype" action="action"  :class="cssBox" @dragover="dragover" @drop="drop" @submit="submit">
         <div v-for="(item,index) in boxs" :key="index">
             <component v-bind:is="item.boxName" initDatas="item.initDatas" boxIndex="item.boxIndex"></component>
         </div>
@@ -9,6 +9,10 @@
 export default {
     name:'drag-FormBox',
     props:{
+        isDrag:{
+            type:Boolean,
+            defaule:true
+        },
         type:{
             type:String,
             default:"post",
@@ -17,7 +21,7 @@ export default {
             type:String,
             defaule:"application/x-www-form-urlencoded",
         },
-        action:String,
+        action:String,//  Url  RegExp is not yet unified  ,suggest you handle it yourself
         submit:{
             type:Function,
             defaule:function(){
@@ -39,6 +43,10 @@ export default {
             controlName  string   
             ……
         */
+        controlLevel:{
+            type:Number,
+            default:2
+        },//0 ——container、1————normal、2————form、3————formControl
         boxs:{
             type:Array,
             default:function(){
@@ -52,7 +60,7 @@ export default {
         }] */        
     },
     methods:{
-        dragover = function(e) {
+        dragover:function(e) {
             e.preventDefault();
         },
         drop:function(e){
