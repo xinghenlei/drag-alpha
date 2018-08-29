@@ -1,6 +1,6 @@
 <template>
-    <div draggbale="isDrag" :class="cssBox" @dragover="dragover" @drop="drop" ref="box">
-        <component v-bind:is="domType" initDatas="initDatas" index="boxIndex"></component>
+    <div :draggbale="isDrag" :class="cssBox" @dragover="dragover" @drop="drop" ref="box">
+        <component v-bind:is="domType" :initDatas="initDatas" :index="boxIndex" :ParentId="randomId"></component>
     </div>
 </template>
 /* 
@@ -38,7 +38,7 @@ export default {
         initDatas:Object,              
     },
     computed:{
-        randomId: function() {
+        selfId: function() {
             var timestamp = new Date().getTime().toString() + this.classname;
             return timestamp;
         }//id
@@ -51,12 +51,12 @@ export default {
             e.preventDefault();
             var controlLevel=e.dataTransfer.getData("controlLevel");
             var dragIndex=e.dataTransfer.getData("dragIndex");
-            var randomId=e.dataTransfer.getData("randomId");
+            var parentId=e.dataTransfer.getData("parentId");
             if(controlLevel!=2||controlLevel!=1){
                 window.alert("拖动控件不符合")//prompt update after a while 
                 return false;
             }
-            $emit("dragover-slwp",randomId,this.boxIndex);
+            this.$emit("dragover-slwp",parentId,this.boxIndex);
             this.boxIndex=dragIndex;
             /*  
             I'm still thinking about the two ways of CSS(flex-basis) and data(initData slwp) for the control position exchange problem.

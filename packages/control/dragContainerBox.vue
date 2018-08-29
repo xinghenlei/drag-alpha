@@ -46,10 +46,10 @@ export default {
         }] */        
     },
     computed:{
-        randomId: function() {
+        selfId: function() {
             var timestamp = new Date().getTime().toString() + this.classname;
             return timestamp;
-        }//This will work after the switch 'page'
+        }//id
     },
     methods:{
         dragover:function(e) {

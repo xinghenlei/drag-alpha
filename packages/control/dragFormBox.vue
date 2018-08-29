@@ -1,5 +1,5 @@
 <template>
-    <form draggbale="isDrag" method="type" enctype="enctype" action="action"  :class="cssBox" @dragover="dragover" @drop="drop" @submit="submit">
+    <form draggbale="isDrag" :method="type" :enctype="enctype" :action="action"  :class="cssBox" @dragover="dragover" @drop="drop" @submit="submit" @dragover-slwp="slwp(parentId,boxIndex)">
         <div v-for="(item,index) in boxs" :key="index">
             <component v-bind:is="item.boxName" initDatas="item.initDatas" boxIndex="item.boxIndex"></component>
         </div>
@@ -59,18 +59,47 @@ export default {
             boxIndex
         }] */        
     },
+    computed:{
+        selfId: function() {
+            var timestamp = new Date().getTime().toString() + this.classname;
+            return timestamp;
+        }//id
+    },
     methods:{
         dragover:function(e) {
             e.preventDefault();
         },
         drop:function(e){
             e.preventDefault();
-            var boxName=e.dataTransfer.getData("boxName");            
-            var initDatas=e.dataTransfer.getData("initDatas");
-            var length=this.boxs.length;//The amount of controls loaded by the current container
-            this.boxs.push({boxName:boxName,initDatas:initDatas,boxIndex:max+1});
-            //  vuex update after some month in the future
-        }//拖动功能实现        
+            var controlLevel=e.dataTransfer.getData("controlLevel");
+            switch(controlLevel){
+                case 1:
+                case 2:{
+                    var dragIndex=e.dataTransfer.getData("dragIndex");
+                    var parentId=e.dataTransfer.getData("parentId");
+                    this.$emit("dragover-slwp",parentId,this.boxIndex);
+                    this.boxIndex=dragIndex;
+                }
+                break;                
+                case 3:{
+                    var boxName=e.dataTransfer.getData("boxName");            
+                    var initDatas=e.dataTransfer.getData("initDatas");
+                    var length=this.boxs.length;//The amount of controls loaded by the current container
+                    this.boxs.push({boxName:boxName,initDatas:initDatas,boxIndex:max+1});
+                }
+                break;
+            }//  vuex update after some month in the future                                   
+        },//拖动功能实现     
+    dragstart:function(){
+        ev.dataTransfer.setData("controlLevel",this.controlLevel);
+        ev.dataTransfer.setData("parentId",this.selfId);
+        ev.dataTransfer.setData("boxindex",this.index)
+        },
+    slwp:function(parentId,boxIndex){
+            if(this.parentId==parentId){
+                this.index=boxIndex;
+            }            
+        }                   
     }
 }
 </script>

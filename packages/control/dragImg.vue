@@ -1,5 +1,5 @@
 <template>
-    <img draggable="true" class="dragImg" src="src" alt="alt" @click="click" @dragstart="dragstart" @dragover-slwp="slwp(randomId,boxIndex)"/>
+    <img draggable="true" :class="dragImg" :src="initDatas.src" :alt="initDatas.alt" @click="initDatas.click" @dragstart="dragstart" @dragover-slwp="slwp(parentId,boxIndex)"/>
 </template>
 <script>
 export default {
@@ -9,42 +9,52 @@ export default {
             type:String,
             default:"dragImg",
         },
-        src:{
-            type:String,
-            required:true, 
-        },//Url  RegExp is not yet unified  ,suggest you handle it yourself
-        alt:{
-            type:String,
-            default:"图片加载失败",
-        },
+        initDatas:{
+            type:object,
+            default:function(){
+                return {
+                    src:"",
+                    alt:"图片加载失败",
+                    click:function(){
+
+                    }
+                }
+            }
+        },      
         controlLevel:{
             type:Number,
             default:3
         },//0 ——container、1————normal、2————form、3————formControl
-        click:{
-            type:Function,
-            default:function(){
-            },
-        },
+        
         index:{
             type:String,
             required:true
-        }    
+        },
+        parentId:{
+            type:string,
+            required:true,
+        },
+        
     },
     computed:{
-        randomId: function() {
-            var timestamp = new Date().getTime().toString() + this.classname;
-            return timestamp;
-        }
-    },//selfId  ,make it better after a while 
+        SelfId:{
+           function() {
+                var timestamp = new Date().getTime().toString() + this.classname;
+                return timestamp;
+            }
+        }   //selfId  ,make it better after a while 
+    },
     methods:{
         dragstart:function(){
             ev.dataTransfer.setData("controlLevel",this.controlLevel);
-            ev.dataTransfer.setData("randomId",this.randomId);
-            ev.dataTransfer.setData("boxindex",this.index)
+            ev.dataTransfer.setData("parentId",this.parentId);
+            ev.dataTransfer.setData("boxindex",this.index);
+            ev.dataTransfer.setData("initDatas",this.initDatas);
         },
-        slwp:function(randomId,boxIndex){
-
+        slwp:function(parentId,boxIndex){
+            if(this.parentId==parentId){
+                this.index=boxIndex;
+            }            
         }
     }
 }
