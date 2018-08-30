@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>draggler</title>
+    <script src="../packages/vue/vue.js"></script>
+    <script src="draggler.js"></script>
+    <link rel="stylesheet" href="../lib/css/index.css">
+</head>
+
+<body>
+    <div id="container">
+        <div id="console">
+            <drag-ContainerBox></drag-ContainerBox>
+        </div>
+        <div id="controls">
+            <drag-nav isFixed="true" isCross="false" :navProps="navData"></drag-nav>
+        </div>
+    </div>
+</body>
+<script>
+    var navInitsData = [{
+        word: "图片",
+        ControlName: "drag-Img",
+        initDatas: null,
+        iconImg: "../original/baseicon",
+    }];
+    var drag = new Vue({
+        el: "#container",
+        data: {
+            navData: navInitsData,
+        }
+    })
+</script>
+
+</html>

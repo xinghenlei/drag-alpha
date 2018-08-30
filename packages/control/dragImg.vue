@@ -1,5 +1,5 @@
 <template>
-    <img draggable="true" :class="dragImg" :src="initDatas.src" :alt="initDatas.alt" @click="initDatas.click" @dragstart="dragstart" @dragover-slwp="slwp(parentId,boxIndex)"/>
+    <img draggable="true" :class="dragImg" :src="initDatas.src" :alt="initDatas.alt" @click="initDatas.click" @dragstart="dragstart" @dragover-controlSlwp="controlSlwp(parentId,boxIndex)"/>
 </template>
 <script>
 export default {
@@ -33,8 +33,7 @@ export default {
         parentId:{
             type:string,
             required:true,
-        },
-        
+        },        
     },
     computed:{
         SelfId:{
@@ -45,15 +44,15 @@ export default {
         }   //selfId  ,make it better after a while 
     },
     methods:{
-        dragstart:function(){
+        dragstart:function(ev){
             ev.dataTransfer.setData("controlLevel",this.controlLevel);
             ev.dataTransfer.setData("parentId",this.parentId);
             ev.dataTransfer.setData("boxindex",this.index);
             ev.dataTransfer.setData("initDatas",this.initDatas);
-        },
-        slwp:function(parentId,boxIndex){
+        },//drag event
+        controlSlwp:function(parentId,boxIndex){
             if(this.parentId==parentId){
-                this.index=boxIndex;
+                this.index=boxIndex;                
             }            
         }
     }
