@@ -7,31 +7,105 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>draggler</title>
     <script src="../packages/vue/vue.js"></script>
-    <script src="draggler.js"></script>
+    <script src="../packages/vue/vuex.js"></script>
+    <script src="draggler.js?v=1"></script>
     <link rel="stylesheet" href="../lib/css/index.css">
 </head>
 
 <body>
-    <div id="container">
-        <div id="console">
-            <drag-ContainerBox></drag-ContainerBox>
+    <div id="container" ref="container">
+        <div id="console" ref="console">
+            <drag-containerbox id="test" :controls="currertCopy" :box-index="currentPageIndex"></drag-containerbox>
         </div>
-        <div id="controls">
-            <drag-nav isFixed="true" isCross="false" :navProps="navData"></drag-nav>
-        </div>
+        <drag-nav is-fixed is-cross :nav-props="navData" ref="nav"></drag-nav>
     </div>
 </body>
 <script>
-    var navInitsData = [{
-        word: "图片",
-        ControlName: "drag-Img",
-        initDatas: null,
-        iconImg: "../original/baseicon",
-    }];
+    Vue.use(Vuex);
+    var store = new Vuex.Store({
+            state: {
+                dragPageList: [new Array()],
+                navInitsData: [{
+                    word: "图片",
+                    controlName: "drag-Img",
+                    controlLevel: 1,
+                    initDatas: {
+                        src: "../lib/img/1.jpg",
+                        alt: "演示图片",
+                    },
+                    iconImg: "../lib/img/img.png",
+                }],
+                currentPageIndex: 0,
+            },
+            getters: {
+                currertCopy: state => {
+                    return state.dragPageList[state.currentPageIndex] || [];
+                }
+            },
+            mutations: {
+                addControls(state, datas) {
+                    state.dragPageList[state.currentPageIndex].push(datas);
+                },
+                addCopy(state, copy) {
+                    state.dragPageList.push(copy);
+                },
+                slwpControlIndex(state, index1, index2) {
+                    var currentPage = state.dragPageList[currentPageIndex];
+                    if (index1 != index2) {
+                        [currentPage[index1], currentPage[index2]] = [currentPage[index2], currentPage[index1]];
+                        currentPage[index1].boxIndex = index2;
+                        currentPage[index2].boxIndex = index1;
+                    }
+                }
+            }
+        })
+        /*
+        class dragControlState {
+                String boxName
+                String controlName
+                controlInit initDatas
+                Number boxIndex
+                Number boxIndex,
+                String selfId,
+                Number boxlevel  
+            }
+        class dragPageList{
+            list<dragControlState> dragPageList ; //default [];
+        }*/
     var drag = new Vue({
         el: "#container",
+        store,
         data: {
-            navData: navInitsData,
+
+        },
+        computed: {
+            navData: function() {
+                return this.$store.state.navInitsData;
+            },
+            currentPageIndex: function() {
+                return this.$store.state.currentPageIndex;
+            },
+            currertCopy: function() {
+                return this.$store.getters.currertCopy;
+            }
+        },
+        methods: {
+            getStyle: function(dom, style) {
+                if (dom instanceof Element) {
+                    var value = parseFloat(getComputedStyle(dom, null).getPropertyValue(style));
+                    return value;
+                }
+            }
+        },
+        mounted: function() {
+            this.$nextTick(function() {
+                var container = this.$refs.container,
+                    console = this.$refs.console;
+                var mt_container = this.getStyle(container, "margin-top"),
+                    ml_container = this.getStyle(container, "margin-left"),
+                    ml_console = this.getStyle(console, "margin-left");
+                this.$refs.nav.$emit("nav-fix", mt_container, ml_container + ml_console);
+            })
         }
     })
 </script>

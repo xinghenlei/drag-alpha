@@ -1,22 +1,26 @@
 Vue.component("drag-nav", {
-    template: '<div :class="["nav",{clearfix:isCross==="false","fleft":isCross,fixed:"isFixed"}]">\
+    template: '<div  ref="top"  class="dragnav clearfix" :class="{fleft:isCross,fixed:isFixed},propclass">\
                     <div :class="cssHeader" v-if="navHeader_html">\
-                        <slot><slot>\
+                        <slot></slot>\
                         {{navHeader_html}}\
                     </div>\
                     <ul class="navUl" v-if="isDrag" v-for="(item,index) in navProps" :key="index">\
-                        <li :class="item.cssLi||"navli"" :draggable="isDrag" @dragstart="dragstart" >\
+                        <li :class="item.cssLi" :draggable="isDrag" @dragstart="dragstart($event,item.controlName,item.controlLevel,item.initDatas)" >\
                             <span class="controlIconWd">{{item.word}}</span>\
-                            <img class="controlIcon" src="item.iconImg" alt="图标加载出错" />\
+                            <img class="controlIcon" :src="item.iconImg" alt="图标加载出错" @load="iconLoad" @error="iconLoad" />\
                         </li>\
                     </ul>\
                     <ul v-else class="navUl"  v-for="(item,index) in navProps" :key="index">\
-                        <li :class="item.cssLi||"navli"">\
-                            <a :class="item.cssA||"navA"" href="item.link" @click="item.click||null">{{item.word}}</a>\
+                        <li :class="item.cssLi">\
+                            <a :class="item.cssA" href="item.link" @click="item.click">{{item.word}}</a>\
                         </li>\
                     </ul>\
                 </div> ',
     props: {
+        propclass: {
+            type: String,
+            default: ""
+        },
         isDrag: {
             type: Boolean,
             default: true
@@ -50,7 +54,7 @@ Vue.component("drag-nav", {
                     link: "", //link
                     word: "test",
                     iconImg: "",
-                    controlLevel: 1,
+                    controlLevel: 1, //draglevel 
                     controlName: null,
                     initDatas: null,
                     click: function(e) {
@@ -58,22 +62,47 @@ Vue.component("drag-nav", {
                         } //click event
                 }];
             }
-        } //菜单栏数据项
+        }, //菜单栏数据项
+    },
+    data: function() {
+        return {
+            ml_left: 0, //nav margin
+        }
     },
     methods: {
-        dragstart: function(ev, controlLevel, controlName, initDatas) {
-            ev.dataTransfer.setData("controlLevel", controlLevel);
+        dragstart: function(ev, controlName, controlLevel, initDatas) {
             ev.dataTransfer.setData("controlName", controlName);
-            ev.dataTransfer.setData("initDatas", initDatas);
-        }
+            ev.dataTransfer.setData("controlLevel", controlLevel);
+            ev.dataTransfer.setData("initDatas", JSON.stringify(initDatas));
+        },
+        getStyle: function(dom, style) {
+            if (dom instanceof Element) {
+                var value = parseFloat(getComputedStyle(dom, null).getPropertyValue(style));
+                return value;
+            }
+        },
+        fixLeft: function(mt_container, ml_left) {
+            var dom = this.$refs.top;
+            dom.style.top = mt_container + 'px';
+            this.ml_left = ml_left;
+        },
+        iconLoad: function() {
+            var dom = this.$refs.top;
+            var width = this.getStyle(dom, "width");
+            dom.style.left = this.ml_left - width - 15 + "px";
+        },
+    },
+    mounted: function() {
+        this.$on("nav-fix", this.fixLeft);
     }
 })
-Vue.component('drag-ContainerBox', {
-    template: '<div draggable="isDrag" :class="cssBox" @dragover="dragover" @drop="drop">\
-                <div v-for="(item,index) in boxs" :key="index">\
-                    <component v-bind:is="item.controlName" initDatas="item.initDatas" boxIndex="item.boxIndex"></component>\
+Vue.component('drag-containerbox', {
+    template: '<div ref="top" draggable="isDrag" :class="cssBox" @dragover="dragover" @drop="drop">\
+                <div ref="box" class="dragboxs" v-for="(item,index) in controls" :key="index" >\
+                    <component v-bind:is="item.boxName" :controlName="item.controlName" :initDatas="item.initDatas" :boxIndex="item.boxIndex"></component>\
                 </div>\
             </div>',
+    name: "drag-containerbox",
     props: {
         isDrag: {
             type: Boolean,
@@ -97,16 +126,17 @@ Vue.component('drag-ContainerBox', {
         controls: {
             type: Array,
             default: function() {
-                return null;
+                return [];
             }
         }
     },
     computed: {
         selfId: function() {
-                var timestamp = new Date().getTime().toString() + this.classname;
-                return timestamp;
-            } //id
+            var timestamp = new Date().getTime().toString();
+            return timestamp;
+        }, //id
     },
+
     methods: {
         dragover: function(e) {
             e.preventDefault();
@@ -114,21 +144,25 @@ Vue.component('drag-ContainerBox', {
         drop: function(e) {
             e.preventDefault();
             var controlName = e.dataTransfer.getData("controlName");
-            var initDatas = e.dataTransfer.getData("initDatas");
-            var controlLevel = e.dataTransfer.getData("controlLevel");
-            if (controlLevel != 2 || controlLevel != 1) {
+            var initDatas = JSON.parse(e.dataTransfer.getData("initDatas"));
+            var controlLevel = parseInt(e.dataTransfer.getData("controlLevel"));
+            var levelArr = [1, 2];
+            var boxArr = ["drag-NormalBox"];
+            if (!levelArr.includes(controlLevel)) {
                 window.alert("拖动控件不符合")
                 return false;
             }
-            var length = this.boxs.length;
-            this.controls.push({ controlName: controlName, initDatas: initDatas, controlLevel: controlLevel, boxIndex: max + 1 });
+            var length = this.controls ? this.controls.length : 0;
+            store.commit("addControls", { boxName: boxArr[controlLevel - 1], controlName: controlName, initDatas: initDatas, boxIndex: length + 1 });
+            //this.controls.push({ boxName: boxArr[controlLevel - 1], controlName: controlName, initDatas: initDatas, boxIndex: length + 1 });
             e.stopPropagation();
-        }
-    }
+        },
+    },
+
 })
 Vue.component('drag-NormalBox', {
-    template: '<div :draggbale="isDrag" :class="cssBox" @dragover="dragover" @drop="drop" @dragover-boxSlwp="boxSlwp" ref="box">\
-                    <component v-bind:is="domType" :initDatas="initDatas" :index="boxIndex" :ParentId="randomId"></component>\
+    template: '<div draggable="false" :draggbale="isDrag" :class="cssBox" @dragover="dragover" @drop="drop" @dragover-boxSlwp="boxSlwp" ref="box">\
+                    <component v-bind:is="controlName" :initDatas="initDatas" :index="boxIndex" :parentId="selfId"></component>\
                 </div>',
     props: {
         isDrag: {
@@ -170,14 +204,14 @@ Vue.component('drag-NormalBox', {
         },
         drop: function(e) {
             e.preventDefault();
-            var controlLevel = e.dataTransfer.getData("controlLevel");
-            var dragIndex = e.dataTransfer.getData("dragIndex");
-            var parentId = e.dataTransfer.getData("parentId"); //dragoverDom of parentId
-            if (controlLevel != 2 || controlLevel != 1) {
+            var controlLevel = parseInt(e.dataTransfer.getData("controlLevel"));
+            var dragIndex = parseInt(e.dataTransfer.getData("dragIndex"));
+            if (controlLevel != 2 || controlLevel != 3) {
                 window.alert("拖动控件不符合") //prompt update after a while 
                 return false;
             }
             this.$emit("dragover-boxSlwp", parentId, this.boxIndex);
+            this.$emit("dragover-controlSlwp", this.selfId, boxIndex);
             this.boxIndex = dragIndex;
             this.$refs.box.style.order = dragIndex;
             /*  
@@ -195,8 +229,12 @@ Vue.component('drag-NormalBox', {
     }
 })
 Vue.component('drag-Img', {
-    template: '<img draggable="true" :class="dragImg" :src="initDatas.src" :alt="initDatas.alt" @click="initDatas.click"\ @dragstart="dragstart" @dragover-controlSlwp="controlSlwp(parentId,boxIndex)"/>',
+    template: '<img draggable="true" :class="dragImg" :src="initDatas.src" :alt="initDatas.alt" @dragstart="dragstart($event)"/>',
     props: {
+        classname: {
+            type: String,
+            defaule: "dragImg"
+        },
         dragImg: {
             type: String,
             default: "dragImg",
@@ -207,9 +245,6 @@ Vue.component('drag-Img', {
                 return {
                     src: "",
                     alt: "图片加载失败",
-                    click: function() {
-
-                    }
                 }
             }
         },
@@ -218,7 +253,7 @@ Vue.component('drag-Img', {
             default: 3
         },
         index: {
-            type: String,
+            type: Number,
             required: true
         },
         parentId: {
@@ -226,20 +261,21 @@ Vue.component('drag-Img', {
             required: true,
         },
     },
+    mounted: function() {
+        this.$on("dragover-controlSlwp", this.controlSlwp);
+    },
     computed: {
-        SelfId: {
-            function() {
-                var timestamp = new Date().getTime().toString() + this.classname;
-                return timestamp;
-            }
+        selfId: function() {
+            var timestamp = new Date().getTime().toString();
+            return timestamp;
         }
     },
     methods: {
-        dragstart: function() {
+        dragstart: function(ev) {
             ev.dataTransfer.setData("controlLevel", this.controlLevel);
-            ev.dataTransfer.setData("parentId", this.parentId);
             ev.dataTransfer.setData("boxindex", this.index);
-            ev.dataTransfer.setData("initDatas", this.initDatas);
+            ev.dataTransfer.setData("parentId", this.parentId);
+            //ev.dataTransfer.setData("initDatas", this.initDatas);
         },
         controlSlwp: function(parentId, boxIndex) {
             if (this.parentId == parentId) {
@@ -247,4 +283,5 @@ Vue.component('drag-Img', {
             }
         }
     }
+
 })

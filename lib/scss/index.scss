@@ -1,3 +1,5 @@
+$pageWidth:60%;
+
 /* common */
 
 html,
@@ -9,6 +11,7 @@ body {
     font-family: 微软雅黑, "微软雅黑", "Microsoft YaHei";
     font-size: 14px;
     text-align: center;
+    overflow: hidden;
 }
 
 span {
@@ -63,12 +66,26 @@ a {
     text-decoration: none;
 }
 
-
-/* nav.vue */
-
-.nav {
-    width: 100%;
+// index.html
+#container {
+    width: $pageWidth;
+    height: 90%;
+    margin: 2.5% auto;
+    position: relative;
 }
+
+#console {
+    width: 50%;
+    height: 90%;
+    margin: 0 auto;
+}
+
+//  dragnav.vue 
+#controls {
+    left: 0;
+}
+
+.dragnav {}
 
 .cssHeader {
     width: 20%;
@@ -76,6 +93,46 @@ a {
 
 .navUl {}
 
-.navli {}
+.navLi {
+    padding-right: 20px;
+}
+
+.controlIconWd {
+    padding-right: 20px;
+}
 
 .navA {}
+
+.controlIcon {
+    width: 50px;
+    vertical-align: middle;
+}
+
+//vue 
+// dragcontainer
+.dragContainer {
+    border: 1px dotted #785;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.dragboxs {
+    text-align: center;
+}
+
+//dragNormalBox
+.dragNormalBox {
+    width: 65%;
+    border: 1px dotted #785;
+    margin: 20px auto;
+}
+
+//dragImg
+.dragImg {
+    width: 80%;
+    border: 2px solid #ddd;
+    border-width: 0px 2px 0px 2px;
+    vertical-align: middle;
+}

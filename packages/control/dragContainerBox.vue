@@ -1,13 +1,13 @@
 <template>
     <div draggable="isDrag" :class="cssBox" @dragover="dragover" @drop="drop">
-        <div v-for="(item,index) in boxs" :key="index">
+        <div v-for="(item,index) in controls" :key="index">
             <component v-bind:is="item.controlName" initDatas="item.initDatas" boxIndex="item.boxIndex"></component>
         </div>
     </div>
 </template>
 <script>
 export default {
-    name:'drag-ContainerBox',
+    name:'drag-containerbox',
     props:{
         isDrag:{
             type:Boolean,
@@ -64,7 +64,7 @@ export default {
                 window.alert("拖动控件不符合")//prompt update after a while 
                 return false;
             }
-            var length=this.boxs.length;//The amount of controls loaded by the current container
+            var length=this.controls.length;//The amount of controls loaded by the current container
             this.controls.push({controlName:controlName,initDatas:initDatas,controlLevel:controlLevel,boxIndex:max+1});
             e.stopPropagation();
             //  vuex update after some month
